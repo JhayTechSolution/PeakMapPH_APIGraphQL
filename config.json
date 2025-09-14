@@ -1,0 +1,8 @@
+{
+  "admins": {
+    "sysadmin": "-pbkdf2-156ed0854820a1f44eea8813548e706a0e76dbbe,17c1e61a314715c1971681f513415810d14d1631881e11cc,10"
+  },
+  "couchdb": {
+    "uuid": "56a969df-6c01-4bb2-9c76-e4ac307810bd"
+  }
+}

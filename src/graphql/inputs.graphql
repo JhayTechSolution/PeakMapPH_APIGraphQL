@@ -1,0 +1,29 @@
+
+input BusActivityInput{ 
+    busId: String
+    currentLocation: LocationInput!
+    passengerCount: Int!
+}
+input LocationInput{
+    latitude: Float!
+    longitude: Float!
+}
+
+input FetchBusActivityInput{
+    busId: String!
+}
+
+input FetchReportDataInput{
+     includeRiderTrend:Boolean! = true
+     includePeakHours:Boolean! = false 
+     includeBottleNeckAreas:Boolean! = false 
+     reportType: ReportType = Daily
+}
+
+
+input BusCounterInput{
+    busId: String! 
+    location: LocationInput!
+    action: PassengerAction! 
+    
+}

@@ -1,0 +1,83 @@
+enum ReportType{
+    Daily
+    Weekly
+    Monthly
+}
+enum CongestionLevel{
+    LOW 
+    MEDIUM 
+    HIGH 
+}
+enum CongestionPassengerLevel{
+    LIGHT 
+    MODERATE 
+    CRITICAL
+    FULL 
+}
+enum PassengerAction{
+    ONBOARD 
+    ALIGHT
+}
+
+type HeatMapPoint{
+    latitude: Float! 
+    longitude: Float!
+    congestion: CongestionLevel!
+    speed: Float
+    freeFlowSpeed: Float 
+    updatedAt: Int!
+}
+
+type RouteMap{
+    routeID: String! 
+    routeName: String! 
+    points: [HeatMapPoint!]!
+}
+
+type Bus{
+    id:String!,
+    maxPassengers:Int
+    busName:String
+
+}
+type LocationPoint{
+    latitude: Float!
+    longitude: Float!
+    routeName:String!
+}
+
+type BusActivity{
+    busId: String!
+
+    lastSavedLocation: LocationPoint!
+    currentLocation: LocationPoint!
+    passengerCount: Int! 
+    congestionLevel: CongestionPassengerLevel!
+}
+
+type ReportData{
+    dataName: String 
+    count:Int 
+}
+type ReportDataResult{
+    data:[ReportData]
+    increasedBy: Float! 
+}
+type Reports{
+    ridershipTrend: ReportDataResult
+    peakHours: ReportDataResult
+    bottleNeckAreas: ReportDataResult
+}
+
+type StationLoad{
+    stationId: String!
+    load: Int!
+    stationName:String!
+
+}
+type BusCapacityLoad{
+    busId: String!
+    maxPassengers: Int!
+    currentPassengers: Int!
+    busName: String!
+}

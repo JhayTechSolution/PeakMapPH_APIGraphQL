@@ -1,0 +1,19 @@
+type Query{
+   getAllBus:[Bus]
+   getReportData(input: FetchReportDataInput!): Reports
+   getHeatMap: RouteMap 
+   getActivityBus(input: FetchBusActivityInput!): BusActivity
+   getStationLoadRank: [StationLoad!]!
+   getRouteMap: [LocationPoint]
+   getCurrentBusCapacityLoad(input: String!): BusCapacityLoad!
+   getBusName(input:String!): String!
+}
+
+type Mutation{
+    createBusActivity(input: BusActivityInput!): String  
+    updateBusCounter(input: BusCounterInput!): String 
+}
+type Subscription {
+  busActivityUpdate(input:String!):BusActivity
+  busActivityUpdateAll:BusActivity
+}
