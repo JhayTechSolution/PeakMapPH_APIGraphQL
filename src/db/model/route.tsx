@@ -2,9 +2,9 @@ import type { ReferrenceModel } from './base_model';
 
 
 export class RouteModel implements ReferrenceModel {
-    static scope:string = "reference";
-    static collection:string = "routes";
-    static channel:string = "peakmap_routes_reference";
+    public static readonly scope:string = "reference";
+    public static readonly collection:string = "routes";
+    public static readonly channel:string = "peakmap_routes_reference";
     _id: string;
     createdAt: number=Date.now();
     updatedAt?: number;

@@ -13,13 +13,14 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { loadSchema } from './schema';
 import { Database } from './db/dbInstance';
 import { resolvers, pubsub } from './resolvers';
+import { createPouchServer } from './devel_tools/pouchdb_tempserver';
 
 async function buildServer() {
   const fastify = Fastify({ logger: true });
   await fastify.register(middie);
 
-  if (process.env.NODE_ENV !== 'production') {
-    // createPouchServer(fastify); // optional
+  if (process.env.NODE_ENV === 'development') {
+       createPouchServer(fastify); // optional
   }
 
   return fastify;

@@ -1,6 +1,9 @@
 import type { TransactionModel } from "./base_model";
 
 export class BusActivityModel implements TransactionModel{
+    public static  readonly scope= 'transaction';
+    public static  readonly collection= 'bus_activities'
+    public static  readonly channel= 'peakmap_busactivity_transaction'
       _id: string;
       createdAt: number;
       updatedAt?: number;
@@ -41,9 +44,9 @@ export class BusActivityModel implements TransactionModel{
         this.lastSavedLocation = data.lastSavedLocation || {latitude:0, longitude:0};
         this.currentLocation = data.currentLocation;
         this.passengerCount = data.passengerCount;
-        this.scope = 'transaction';
-        this.collection = 'bus_activities';
-        this.channel = 'peakmap_busactivity_transaction';
+        this.scope = BusActivityModel.scope;
+        this.collection = BusActivityModel.collection;
+        this.channel = BusActivityModel.channel;
       }
 
 

@@ -80,4 +80,6 @@ type BusCapacityLoad{
     maxPassengers: Int!
     currentPassengers: Int!
     busName: String!
+    congestionLevel: CongestionPassengerLevel!
+    location: LocationPoint!
 }
