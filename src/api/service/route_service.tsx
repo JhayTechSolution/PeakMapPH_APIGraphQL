@@ -48,7 +48,6 @@ export class RouteService{
             }
         })
         var docs = all.docs;
-//        var docs = all.docs.map((r:any) => r.doc);
         if(docs.length === 0 ) return null;
         var nearest = docs.reduce((closest:any, current:any) =>{ 
            var dist = this.haversine(input.latitude, input.longitude, current.location.latitude, current.location.longitude); 
