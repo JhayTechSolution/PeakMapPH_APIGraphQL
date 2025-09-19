@@ -22,7 +22,8 @@ export async function createBusActivity(input:BusActivityInput, pubsub:any ){
         busId: input.busId,
         lastSavedLocation:  haveExistingActivity ? existingBusActivities.lastSavedLocation : input.currentLocation,
         currentLocation: input.currentLocation,
-        passengerCount: input.passengerCount
+        passengerCount: input.passengerCount,
+        onboarded: input.onboarded || false
     });
     await pubsub.publish(
         `busActivityUpdate:${input.busId}`, // event name (string) 

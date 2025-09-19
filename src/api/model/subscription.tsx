@@ -25,7 +25,13 @@ export class Subscription{
                 console.log('Subscription to busActivityUpdateAll');
                 return this.pubsub.asyncIterableIterator('busActivityUpdate');
             }
-        };  
+        };
+        this._resolvers["stationLoadUpdate"] = {
+            subscribe:  (_:any)=>{
+                console.log('Subscription to stationLoadUpdate');
+                return this.pubsub.asyncIterableIterator('stationLoadUpdate');
+            }
+        };
     }
 
 

@@ -18,15 +18,21 @@ export async function updateBusCounter(input: BusCounterInput, pubsub?:any){
     if(! busInfo){
         throw new Error("Bus not found");
     } 
-    var lastActivity = await busActivity.getBusLastActivity(input.busId);
-    if(! lastActivity){
-        throw new Error("No bus activity found. Please start bus activity first.");
+    let lastCounter = 0 ;
+    try{
+        var lastActivity = await busActivity.getBusLastActivity(input.busId);
+        if(lastActivity){
+            lastCounter =  lastActivity.passengerCount; 
+        }
+    }catch(e){
+        // Handle error
     }
     //let _counterService = new CounterService();
-    let lastCounter =  lastActivity.passengerCount; 
+    let onboard: boolean = false;
     if(lastCounter <  busInfo.maxPassengers){
         if(input.action === "ONBOARD"){
             lastCounter+=1;
+            onboard = true;
         }else if(input.action === "ALIGHT" && lastCounter > 0){
             lastCounter-=1;
         }else{
@@ -40,16 +46,20 @@ export async function updateBusCounter(input: BusCounterInput, pubsub?:any){
             throw new Error("Max capacity reached "+lastCounter);
         }
     }
+    console.log("Updated passenger count: ", lastCounter);
     let res = await createBusActivity(new BusActivityInput({
         busId: input.busId,
         currentLocation: input.location,
-        passengerCount: lastCounter
+        passengerCount: lastCounter,
+        onboarded: onboard, 
     }),  pubsub);
  
+    
     if(!res){
         throw new Error("Failed to update bus counter");
     }
-
+    if(!pubsub) return res;
+    busActivity.sendStationLoadUpdate(pubsub);
   await pubsub.publish(
     `busActivityUpdate:${input.busId}`, // event name (string)
     {

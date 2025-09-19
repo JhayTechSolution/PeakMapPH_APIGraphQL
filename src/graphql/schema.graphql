@@ -7,7 +7,7 @@ type Query{
    getRouteMap: [LocationPoint]
    getCurrentBusCapacityLoad(input: String!): BusCapacityLoad!
    getBusName(input:String!): String!
-   getRouteMapByLocation(input: LocationInput!): String!  
+   getRouteMapByLocation(input: LocationInput!): String! 
 }
 
 type Mutation{
@@ -17,4 +17,5 @@ type Mutation{
 type Subscription {
   busActivityUpdate(input:String!):BusCapacityLoad!
   busActivityUpdateAll:BusActivity
+  stationLoadUpdate: [StationLoad!]!
 }

@@ -21,7 +21,7 @@ export class RouteService{
     }
 
 
-    public async getRouteInfoBaseOnLocation(input: {latitude:number, longitude:number}){
+    public async getRouteInfoBaseOnLocation(input: {latitude:number, longitude:number}): Promise<RouteModel | null>{
         let index = await this.db.createOrGetIndex(["location.latitude","location.longitude","createdAt"], "location_created_index")
         var exact  = await this.db.find({ 
             selector: {

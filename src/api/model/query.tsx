@@ -3,6 +3,7 @@ import { getRouteMap } from "../logic/get_route_map";
 import { getBusLoad } from "../logic/get_current_load";
 import { getBusName } from "../logic/get_bus_name"; 
 import { getRouteMapByLocation } from "../logic/get_route_map_by_location";
+import { getStationLoadRank } from "../logic/get_station_load_rank";
 export class  Query{
     _resolvers:any;
     constructor(resolvers:any = {}){
@@ -32,6 +33,9 @@ export class  Query{
         };
         this._resolvers['getRouteMapByLocation'] = async (_:any, {input}: {input:{latitude:number, longitude:number}})=>{
           return await getRouteMapByLocation(input);
+        }
+        this._resolvers['getStationLoadRank'] = async ()=>{
+            return await getStationLoadRank();
         }
     }
 

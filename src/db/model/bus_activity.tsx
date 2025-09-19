@@ -6,10 +6,12 @@ export class BusActivityModel implements TransactionModel{
     public static  readonly channel= 'peakmap_busactivity_transaction'
       _id: string;
       createdAt: number;
+      dateStamp: string; //MMddYYYY
       updatedAt?: number;
       deletedAt?: number;
       createdBy: string;
       updatedBy?: string;
+      onboarded: boolean; 
       deletedBy?: string;
       deleted: boolean;
       busId: string;
@@ -28,9 +30,11 @@ export class BusActivityModel implements TransactionModel{
         deletedBy?: string;
         deleted: boolean;
         busId: string;
+
         lastSavedLocation : { latitude: number; longitude: number; };
         currentLocation : { latitude: number; longitude: number; };
         passengerCount:number ;
+        onboarded?: boolean;  
       }){
         this._id = data.id;
         this.createdAt = Date.now();
@@ -47,6 +51,12 @@ export class BusActivityModel implements TransactionModel{
         this.scope = BusActivityModel.scope;
         this.collection = BusActivityModel.collection;
         this.channel = BusActivityModel.channel;
+        const date = new Date(this.createdAt);
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const year = date.getFullYear();
+        this.dateStamp = `${month}${day}${year}`;
+        this.onboarded = data.onboarded || false;
       }
 
 

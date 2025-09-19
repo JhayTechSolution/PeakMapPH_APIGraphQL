@@ -69,12 +69,7 @@ type Reports{
     bottleNeckAreas: ReportDataResult
 }
 
-type StationLoad{
-    stationId: String!
-    load: Int!
-    stationName:String!
 
-}
 type BusCapacityLoad{
     busId: String!
     maxPassengers: Int!
@@ -82,4 +77,9 @@ type BusCapacityLoad{
     busName: String!
     congestionLevel: CongestionPassengerLevel!
     location: LocationPoint!
+}
+
+type StationLoad{
+    stationName: String! 
+    passengerCount: Int!
 }

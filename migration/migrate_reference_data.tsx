@@ -106,8 +106,7 @@ async function migrateRoutes(){
 }
 
 
-async function startMigrations(){
-  await db.createIndex({ index: { fields: ["scope", "collection","channel","createdAt"] },name:"scope_collection_channel_createdAt" });
+async function startMigrations(){ 
   await db.createIndex({ index: { fields: ["channel","scope", "collection","_id"] } });
   migrateStations();
   migrateRoutes();
