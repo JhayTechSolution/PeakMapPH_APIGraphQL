@@ -1,5 +1,3 @@
-import { BusCounterInput } from "../model/bus_counter_input";
-import { CounterService } from "../service/counter_service"; 
 import { BusService } from "../service/bus_service";
 import { getCongestionLevel } from "./congestion_level";
 import {RouteService} from "../service/route_service";

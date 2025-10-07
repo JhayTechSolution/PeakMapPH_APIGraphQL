@@ -4,8 +4,10 @@ import { LocationInput } from "../model/location_input";
 import { BusService } from "./bus_service";
 export class CounterService{
     private db:Database; 
+    private dbName:any 
     constructor(){
-        this.db = new Database(process.env.DBNAME);
+        this.dbName = process.env.DBNAME || null;
+        this.db = new Database(this.dbName);
     }
     public async updateBusCounter(busId: string, passengerCount: number, location:LocationInput){
         let busService = new BusService();
@@ -31,7 +33,7 @@ export class CounterService{
     }
 
     public async getLastCount(busId:string){
-        var  use_index = await this.db.createOrGetIndex(["createdAt"], "createdAt-index");
+        var  use_index:any  = await this.db.createOrGetIndex(["createdAt"], "createdAt-index");
          var query = await this.db.find({
             selector: {
                 scope: BusCounterModel.scope,

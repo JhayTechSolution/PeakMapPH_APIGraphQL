@@ -2,7 +2,8 @@ import { BusType } from "../model/bus_type";
 import { Database } from "../../db/dbInstance";
 
 export async function getAllBus(){
-    const db = new Database(process.env.DBNAME);
+    let dbName:any = process.env.DBNAME || null;
+    const db = new Database(dbName);
     const buses = await db.find({selector: {"scope":"reference", "collection":"buses"}})
     var doc = buses.docs;
  

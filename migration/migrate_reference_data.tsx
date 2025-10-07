@@ -1,4 +1,4 @@
-const dotenv = require('dotenv');
+import * as dotenv from 'dotenv';
 
 const envFIle = ".env."+[process.env.NODE_ENV || 'development'];
 const path = require('path');
@@ -8,8 +8,8 @@ import {Database} from '../src/db/dbInstance';
 import {StationModel} from '../src/db/model/station';
 import { RouteModel } from '../src/db/model/route';
 import { BusModel } from '../src/db/model/bus';
-
-const db = new Database(process.env.DBNAME);
+let dbName:any = process.env.DBNAME || null;
+const db = new Database(dbName);
 console.log(process.env)
 async function migrateStations(){
   

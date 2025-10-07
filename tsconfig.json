@@ -6,20 +6,20 @@
     // "outDir": "./dist",
 
     // Environment Settings
-    // See also https://aka.ms/tsconfig/module
-    "module": "commonjs",
-    "target": "esnext",
-    "types": [],
+    // See also ://aka.ms/tsconfig/module
+    "module": "nodenext",
+    "target": "es2022", 
+    "esModuleInterop": true,
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
     // and npm install -D @types/node
-
+    "typeRoots": ["./node_modules/@types", "./src/types"],
     // Other Outputs
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
-
+    "allowSyntheticDefaultImports": true,
     // Stricter Typechecking Options
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
@@ -40,5 +40,12 @@
     "noUncheckedSideEffectImports": false,
     "moduleDetection": "auto",
     "skipLibCheck": true,
-  }
+    "outDir": "build",
+    "rootDir": "src", 
+    "moduleResolution": "nodenext"
+
+  },
+
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }

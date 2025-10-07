@@ -27,3 +27,12 @@ input BusCounterInput{
     action: PassengerAction! 
     
 }
+input AnalyticsInput{
+    analyticsType: AnalyticsType
+    timeRange: ReportType
+}
+input CongestionReporterInput{
+    latitude: Float!
+    longitude:Float! 
+    currentSpeed: Float!
+}

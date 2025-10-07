@@ -15,6 +15,6 @@ const resolvers = {
     }
 }
 new Mutation(resolvers.Mutation , pubsub);
-new Query(resolvers.Query);
+new Query(resolvers.Query, pubsub);
 new Subscription(resolvers.Subscription, pubsub);
 export {resolvers, pubsub};

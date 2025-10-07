@@ -2,8 +2,8 @@ import { FastifyInstance } from "fastify";
 import PouchDBCore from "pouchdb";
 import expressPouchDB from "express-pouchdb";
 import fastifyStatic from "@fastify/static";
-import path from "path";
-
+ 
+import path from "path"; 
 // Create a PouchDB constructor dedicated to the HTTP server,
 // with its own storage prefix so it's not the same LevelDB folder
 const ServerPouchDB = PouchDBCore.defaults({
@@ -21,6 +21,7 @@ function createPouchServer(fastify: FastifyInstance) {
 
   // Mount express-pouchdb inside Fastify
   fastify.use((req, res, next) => {
+    console.log("FASTIFY CHECK")
     if (req.url?.startsWith("/fauxton")) return next();
     if (req.url?.startsWith("/graphql")) return next();
     if (req.url?.startsWith("/graphiql")) return next();

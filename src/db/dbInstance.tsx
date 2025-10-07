@@ -2,19 +2,19 @@
 import PouchDBCore from "pouchdb";
 import PouchDBFind from "pouchdb-find";
 import cryptoPouch from "crypto-pouch";
-import crypto from "crypto";
-import path from "path";
-
+import crypto from "crypto"; 
+import "pouchdb-find"
 const PouchDB = PouchDBCore.plugin(PouchDBFind).plugin(cryptoPouch);
-
-
+import path from "path";
+ 
 
 export class Database {
   private static instance: Database | null = null;
-  private db: PouchDB.Database;
+  private db: PouchDB.Database | any = null;
   private remote: PouchDB.Database | null = null;
 
   constructor(dbName = null) {
+    
     if(dbName ==  null){
       console.log('default db should not be used, check your .env file');
         return 
@@ -59,16 +59,16 @@ export class Database {
 
     this.db
       .sync(this.remote, { live: true, retry: true })
-      .on("change", info => console.log("[Replication change]", info))
-      .on("paused", err =>
+      .on("change", (info:any )=> console.log("[Replication change]", info))
+      .on("paused", (err:any) =>
         err
           ? console.error("[Replication paused with error]", err)
           : console.log("[Replication paused: idle, up-to-date]")
       )
       .on("active", () => console.log("[Replication active]"))
-      .on("denied", err => console.error("[Replication denied]", err))
-      .on("complete", info => console.log("[Replication complete]", info))
-      .on("error", err => console.error("[Replication error]", err));
+      .on("denied", (err:any)=> console.error("[Replication denied]", err))
+      .on("complete", (info:any) => console.log("[Replication complete]", info))
+      .on("error", (err:any) => console.error("[Replication error]", err));
   }
 
   async add(doc: any = {}) {
@@ -101,7 +101,7 @@ export class Database {
     return result.rows.map((row: any) => row.doc);
   }
 
-  async createIndex(index: PouchDB.Find.IndexDefinition): Promise<PouchDB.Find.CreateIndexResponse> {
+  async createIndex(index: any): Promise<any > {
     return this.db.createIndex(index);
   }
 
@@ -115,7 +115,7 @@ export class Database {
     return this.db.get(id);
   }
 
-  private generateId(): string {
+  public generateId(): string {
     return crypto.randomBytes(32).toString("hex");
   }
 

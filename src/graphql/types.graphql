@@ -19,19 +19,22 @@ enum PassengerAction{
     ALIGHT
 }
 
+enum AnalyticsType{
+    RidersTrend
+    PeakHours
+    Bottleneck
+}
+ 
+
 type HeatMapPoint{
     latitude: Float! 
-    longitude: Float!
-    congestion: CongestionLevel!
-    speed: Float
-    freeFlowSpeed: Float 
-    updatedAt: Int!
+    longitude: Float! 
 }
 
-type RouteMap{
-    routeID: String! 
-    routeName: String! 
-    points: [HeatMapPoint!]!
+type RouteMap{ 
+    congestion: CongestionLevel! 
+    target: HeatMapPoint
+    routeName: String
 }
 
 type Bus{
@@ -64,9 +67,10 @@ type ReportDataResult{
     increasedBy: Float! 
 }
 type Reports{
-    ridershipTrend: ReportDataResult
-    peakHours: ReportDataResult
-    bottleNeckAreas: ReportDataResult
+    hours:[Int]
+    record:[String]
+    value:[Float]
+    changes: Int
 }
 
 
@@ -80,6 +84,20 @@ type BusCapacityLoad{
 }
 
 type StationLoad{
-    stationName: String! 
-    passengerCount: Int!
+    stationName: String
+    passengerCount: Int
+}
+
+type PeakHourTrend{
+    day:String
+    hour:Int
+    passengerCount:Int
+    percentage:Float
+}
+
+type Congestion{
+    level:CongestionLevel
+    routeName: String
+    latitude:Float!
+    longitude:Float!
 }

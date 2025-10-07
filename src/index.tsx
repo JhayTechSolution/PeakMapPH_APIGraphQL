@@ -1,5 +1,8 @@
-import dotenv from 'dotenv';
-import path from 'path';
+import * as dotenv from 'dotenv';
+
+import path from "path";
+ 
+
 dotenv.config({ path: path.resolve(__dirname, '../', `.env.${process.env.NODE_ENV || 'development'}`) });
 
 import Fastify from 'fastify';
@@ -14,20 +17,25 @@ import { loadSchema } from './schema';
 import { Database } from './db/dbInstance';
 import { resolvers, pubsub } from './resolvers';
 import { createPouchServer } from './devel_tools/pouchdb_tempserver';
-
+let hasPouch = false;
+var runMigration = true;
 async function buildServer() {
+  
   const fastify = Fastify({ logger: true });
   await fastify.register(middie);
 
-  if (process.env.NODE_ENV === 'development') {
+  if (hasPouch) {
+      console.log("CREATING POUCHDB ")
        createPouchServer(fastify); // optional
   }
+  
 
   return fastify;
 }
 
 const start = async () => {
-  const db = new Database(process.env.DBNAME);
+  let dbName:any = process.env.DBNAME || null
+  const db = new Database(dbName);
   const app = await buildServer();
 
   const typeDefs = await loadSchema(); // must return SDL string
@@ -39,7 +47,7 @@ const start = async () => {
     resolvers,
     subscription: false, 
     graphiql: true,
-    context: () => ({ pubsub }),
+    context: () => ({ pubsub })
   });
 
   await app.ready();
@@ -60,9 +68,13 @@ const start = async () => {
     wsServer
   );
 
-  const PORT = process.env.PORT || 3001;
-  await app.listen({ port: PORT, host: '0.0.0.0' });
+  const PORT:any = process.env.PORT || 3001;
+//  await app.listen({ port: PORT, host: '0.0.0.0' });
+  await app.listen({
+     port: PORT,
+     host: "0.0.0.0",
 
+  } )
   console.log(`HTTP ready � http://localhost:${PORT}/graphiql`);
   console.log(`WS ready � ws://localhost:${PORT}/graphql`);
 };

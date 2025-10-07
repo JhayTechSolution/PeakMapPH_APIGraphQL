@@ -20,17 +20,18 @@ export async function createBusActivity(input:BusActivityInput, pubsub:any ){
     let activity = await busActivityService.createBusActivity({
         createdBy: 'system',
         busId: input.busId,
-        lastSavedLocation:  haveExistingActivity ? existingBusActivities.lastSavedLocation : input.currentLocation,
+        lastSavedLocation:  haveExistingActivity ? (existingBusActivities?.lastSavedLocation|| {latitude:0,longitude:0} ): input.currentLocation,
         currentLocation: input.currentLocation,
         passengerCount: input.passengerCount,
         onboarded: input.onboarded || false
     });
+    busActivityService.sendStationLoadUpdate(pubsub)
     await pubsub.publish(
-        `busActivityUpdate:${input.busId}`, // event name (string) 
+        `busActivityUpdate`, // event name (string) 
         {   
-            busActivityUpdate: { 
+            busActivityUpdateAll: { 
                  busId: input.busId,
-                    lastSavedLocation:  haveExistingActivity ? existingBusActivities.lastSavedLocation : input.currentLocation,
+                    lastSavedLocation:  haveExistingActivity ? (existingBusActivities?.lastSavedLocation|| {latitude:0,longitude:0} ): input.currentLocation,
                     currentLocation: input.currentLocation,
                     passengerCount: input.passengerCount,
                     congestionLevel: getCongestionLevel(input.passengerCount, busInfo.maxPassengers),

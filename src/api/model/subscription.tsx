@@ -32,6 +32,12 @@ export class Subscription{
                 return this.pubsub.asyncIterableIterator('stationLoadUpdate');
             }
         };
+        this._resolvers["congestionUpdate"] = {
+            subscribe:  (_:any)=>{
+                console.log('Subscription to congestionUpdate');
+                return this.pubsub.asyncIterableIterator('congestionUpdate');
+            }
+        };
     }
 
 

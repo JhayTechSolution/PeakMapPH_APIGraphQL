@@ -3,8 +3,10 @@ import { RouteModel } from "../../db/model/route";
 import { LocationInput } from "../model/location_input";
 export class RouteService{
     private db:Database; 
+    private dbName: any 
     constructor(){
-        this.db = new Database(process.env.DBNAME);
+        this.dbName = process.env.DBNAME || null;
+        this.db = new Database(this.dbName);
     }
 
     private haversine(lat1:number, lon1:number, lat2:number, lon2:number) { 

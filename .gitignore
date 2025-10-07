@@ -6,3 +6,4 @@ serverdb/
 localdb/*
 serverdb/*
 db/*
+dist/

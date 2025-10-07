@@ -3,6 +3,7 @@ import { BusActivityInput } from "./bus_activity_input";
 import { createBusActivity } from "../logic/create_bus_activity";
 import { BusCounterInput } from "./bus_counter_input";
 import { updateBusCounter } from "../logic/update_bus_counter";
+import { updateHeatmap } from "../logic/update_heatmap";
 export class Mutation{
     _resolvers:any;
     constructor(resolvers:any = {}, private pubsub: PubSub){
@@ -25,7 +26,11 @@ export class Mutation{
 
             return await updateBusCounter(counterInput, this.pubsub);
         };
+          this._resolvers["reportCurrentCongestion"] = async (_:any, {input}: {input:{latitude:number, longitude:number, currentSpeed:number}})=>{
+            return await updateHeatmap( input.latitude, input.longitude, input.currentSpeed, this.pubsub);
+        }
+
     }
 
 
-}
+}   
