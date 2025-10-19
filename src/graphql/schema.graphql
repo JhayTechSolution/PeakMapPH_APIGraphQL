@@ -17,8 +17,9 @@ type Query{
 type Mutation{
     createBusActivity(input: BusActivityInput!): String  
     updateBusCounter(input: BusCounterInput!): String 
-
-   reportCurrentCongestion(input: CongestionReporterInput):String
+    reportCurrentCongestion(input: CongestionReporterInput):String
+    createAccount(input: AccountCreationInput!):String   
+    addBusIdentity(input: AddBusIdentifierInput!):String
 }
 type Subscription {
   busActivityUpdate(input:String!):BusCapacityLoad!

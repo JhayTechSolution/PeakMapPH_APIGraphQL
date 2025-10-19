@@ -36,3 +36,21 @@ input CongestionReporterInput{
     longitude:Float! 
     currentSpeed: Float!
 }
+ 
+input AccountCreationInput{
+    fullName:String!
+    birthDate:String!
+    contactNumber:String!
+    emailAddress:String!
+    username:String!
+    password:String!
+    confirmPassword:String!
+    accountType:AccountType!
+
+}
+input AddBusIdentifierInput{
+    busId: String!
+    bluezMacAddress: String!
+    busName:String!
+    maxPassengers:Int!
+}

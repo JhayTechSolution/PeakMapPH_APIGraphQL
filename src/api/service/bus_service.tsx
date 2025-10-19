@@ -15,6 +15,7 @@ export class BusService {
                 return null ;
             }
             //map to BusModel
+            busInfo['id']=busInfo._id ;
             return new BusModel(busInfo);
         }catch(error){
             console.error("Error fetching bus info:", error);
@@ -33,4 +34,9 @@ export class BusService {
         if (!busInfo) throw new Error("Bus not found");
         return this.db.delete(busId);
     }
+  
+
+    
+
+
 }

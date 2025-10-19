@@ -18,6 +18,10 @@ enum PassengerAction{
     ONBOARD 
     ALIGHT
 }
+enum AccountType{
+    DRIVER
+    ADMIN
+}
 
 enum AnalyticsType{
     RidersTrend
@@ -86,6 +90,8 @@ type BusCapacityLoad{
 type StationLoad{
     stationName: String
     passengerCount: Int
+    maxPassengers: Int 
+    congestionLevel: CongestionPassengerLevel
 }
 
 type PeakHourTrend{

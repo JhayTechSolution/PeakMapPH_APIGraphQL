@@ -21,6 +21,7 @@ export async function updateBusCounter(input: BusCounterInput, pubsub?:any){
     let lastCounter = 0 ;
     try{
         var lastActivity = await busActivity.getBusLastActivity(input.busId);
+        console.log("LAST ACTIVITY ",lastActivity)
         if(lastActivity){
             lastCounter =  lastActivity.passengerCount; 
         }
@@ -29,7 +30,7 @@ export async function updateBusCounter(input: BusCounterInput, pubsub?:any){
     }
     //let _counterService = new CounterService();
     let onboard: boolean = false;
-    if(lastCounter <  busInfo.maxPassengers){
+    if(lastCounter <=  busInfo.maxPassengers){
         if(input.action === "ONBOARD"){
             lastCounter+=1;
             onboard = true;

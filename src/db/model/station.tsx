@@ -2,6 +2,10 @@ import type { ReferrenceModel } from './base_model';
 
 
 export class StationModel implements ReferrenceModel {
+
+    static scope:string  = 'reference'; 
+    static collection:string = 'stations';
+    static channel:string  = 'peakmap_station_reference';
     _id: string;
     createdAt: number=Date.now();
     updatedAt?: number;
@@ -26,8 +30,20 @@ export class StationModel implements ReferrenceModel {
         this.deleted = data.deleted || false;
         this.location = data.location || { latitude: 0, longitude: 0 };
         this.stationName = data.stationName || '';
-        this.scope = 'reference'
-        this.collection = 'stations';
-        this.channel  = 'peakmap_station_reference';
+        this.scope = StationModel.scope
+        this.collection = StationModel.collection;
+        this.channel  = StationModel.channel;
+    }
+
+    static create(){
+        return new StationModel({
+            id: "",
+            deleted:false ,
+            location:{
+                latitude: 0,
+                longitude: 0
+            },
+            stationName:""
+        });
     }
 }

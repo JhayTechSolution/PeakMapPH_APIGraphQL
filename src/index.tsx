@@ -17,7 +17,7 @@ import { loadSchema } from './schema';
 import { Database } from './db/dbInstance';
 import { resolvers, pubsub } from './resolvers';
 import { createPouchServer } from './devel_tools/pouchdb_tempserver';
-let hasPouch = false;
+let hasPouch = true;
 var runMigration = true;
 async function buildServer() {
   

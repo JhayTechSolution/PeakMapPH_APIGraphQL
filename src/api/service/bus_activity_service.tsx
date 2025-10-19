@@ -2,16 +2,20 @@ import { Database } from "../../db/dbInstance";
 import { BusActivityModel } from "../../db/model/bus_activity";
 import { PubSub } from "graphql-subscriptions";
 import { RouteService } from "./route_service";
+import { StationService } from "./station_service";
 import { RouteModel } from "../../db/model/route";
 import { pubsub } from "../../resolvers";
 import { getCongestionLevel } from "../logic/congestion_level";
 import { BusService } from "./bus_service";
+
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat.js";
 import utc from "dayjs/plugin/utc.js";
 import timezone from "dayjs/plugin/timezone.js";
 import isoWeek from "dayjs/plugin/isoWeek.js";
 import weekOfYear from "dayjs/plugin/weekOfYear.js";
+import { StationModel } from "../../db/model/station";
+import { BusModel } from "../../db/model/bus";
 
 dayjs.extend(advancedFormat);
 dayjs.extend(utc);
@@ -34,7 +38,13 @@ export enum TimeRange {
 export class BusActivityService {
     private db: Database;
     private dbName:any 
+    private stationService: StationService; 
+    private busService : BusService ; 
+    private routeService : RouteService; 
     constructor() {
+        this.busService = new BusService();
+        this.stationService = new StationService();
+        this.routeService = new RouteService(); 
         this.dbName = process.env.DBNAME || null;        
         this.db = new Database(this.dbName);
     }
@@ -79,6 +89,7 @@ export class BusActivityService {
                     collection: BusActivityModel.collection,
                     channel: BusActivityModel.channel,
                     createdAt: { "$gte": 0 },
+                    
                 },
                 sort: [{ createdAt: 'desc' }]
             });
@@ -90,6 +101,85 @@ export class BusActivityService {
         }
     }
 
+    async getBusInLocation(latitude: number, longitude: number):Promise<BusModel| any> {
+       
+        var result = await this.db.find({
+            selector:{
+                 scope: BusActivityModel.scope,
+                channel:BusActivityModel.channel ,
+                collection: BusActivityModel.collection,
+                currentLocation:{
+                    latitude: latitude, 
+                    longitude: longitude
+                },
+                createdAt: {"$gt": 0}
+            },
+            sort:[{
+                createdAt:"desc"
+            }]
+        });
+
+    
+        
+        if(result.docs.length > 0 ){
+            var docs:any[] = []
+            result.docs.map((item)=>{
+                var exists = docs.filter((x)=>{
+                    return x.busId === item.busId 
+                }).length > 0
+                if(!exists){
+                    docs.push(item )
+                }
+
+            })
+            var buses: BusModel[] = [] 
+            for(var i =0; i < docs.length; i++){
+                var currentActivity: BusActivityModel = docs[i]
+           
+                var bus:BusModel | null= await this.busService.getBusInfo(currentActivity.busId) ;
+              
+                if(bus !== null){
+                    if(bus._id !== undefined){
+                        
+                        buses.push(bus);
+                        
+                    }
+                }
+
+            }
+          
+            return buses; 
+        }
+        return null;
+    }
+
+    async getDeployedBusPerStation(){
+       
+        var stations:RouteModel[] | null = await this.routeService.getFullRoutes();
+       
+        var res: {station: string , buses: BusModel[]}[] = []
+        for(var i=0; i < (stations || []).length; i ++){
+            var currentStation : RouteModel | null = (stations || [])[i] || null;
+            if(currentStation !== null ){
+                var bus = await this.getBusInLocation(currentStation.location.latitude, currentStation.location.longitude);
+                
+                if(bus != null){
+                    if(bus.length  > 0){
+                        res.push({
+                            station: currentStation.routeName,
+                            buses: bus 
+                        })
+                    }
+                }
+            }
+            
+        } 
+        
+        if(res.length > 0 ){
+            return res ;
+        }   
+        return null;
+    }
     async getStationLoadRank() {
         const routeService = new RouteService();
         const today = dayjs().format("MMDDYYYY");
@@ -106,20 +196,82 @@ export class BusActivityService {
             "fields": ["dateStamp", "onboarded", "currentLocation"]
         };
 
-        const query = await this.db.find(selector);
-        const stationData: { stationName: string; passengerCount: number; }[] = [];
 
+        const query = await this.db.find(selector);
+        const stationData: { stationName: string; passengerCount: number; maxPassengers: number, congestionLevel:string  }[] = [];
+        var deployedBus = await this.getDeployedBusPerStation();
+       
         if (query.docs.length > 0) {
-            await Promise.all(query.docs.map(async (doc: any) => {
-                if (!doc.currentLocation) return;
-                const route: RouteModel | null = await routeService.getRouteInfoBaseOnLocation(doc.currentLocation);
-                if (route) {
-                    const station = stationData.find(s => s.stationName === route.routeName);
-                    if (station) station.passengerCount += 1;
-                    else stationData.push({ stationName: route.routeName, passengerCount: 1 });
+            var distinctOnboarded:any[] = [];
+            query.docs.map((item)=>{
+                var exists = distinctOnboarded.filter((x)=>{
+                    return x.currentLocation.latitude === item.currentLocation.latitude &&
+                    x.currentLocation.longitude === item.currentLocation.longitude 
+
+                }).length > 0 
+                if(!exists){
+                    distinctOnboarded.push(item)
                 }
-            }));
+            });
+            for(var i =0; i < distinctOnboarded.length; i++){
+                var current = distinctOnboarded[i];
+                var onboardedStation = await this.db.find({
+                    selector:{
+                        onboarded: true,
+                        dateStamp: today,
+                        deleted: false,
+                        scope: BusActivityModel.scope,
+                        collection: BusActivityModel.collection,
+                        channel: BusActivityModel.channel,
+                        currentLocation:current.currentLocation 
+                        
+                    }
+                });
+                var alighedStation = await this.db.find({
+                    selector:{
+                        onboarded: false,
+                        dateStamp: today,
+                        deleted: false,
+                        scope: BusActivityModel.scope,
+                        collection: BusActivityModel.collection,
+                        channel: BusActivityModel.channel,
+                        currentLocation:current.currentLocation    
+                    }
+                })
+                var onboardCount  = onboardedStation.docs.length; 
+                var alightedCount = alighedStation.docs.length; 
+                console.log(onboardCount, alightedCount)
+                const route : RouteModel | null = await routeService.getRouteInfoBaseOnLocation(current.currentLocation)
+                if(route){
+                    const station = stationData.find(s=> s.stationName === route.routeName)
+                    var buses : {station:string , buses: BusModel[]}[] | null = deployedBus?.filter((bus)=>{
+                        return bus.station === route.routeName
+                    }) || null ;
+                    var max = 1;
+                     if(buses !== null){
+                            if(buses.length > 0 ){
+                                var busData = buses[0];
+                                if(busData?.buses !== null){
+                                    if((busData?.buses || []).length > 0){
+                                        max = 0
+                                        for(var d=0 ; d < (busData?.buses || []).length; d++){
+                                            var currentBus:BusModel | null =busData?.buses[d] || null;
+                                            if(currentBus !== null){
+                                                max+= currentBus.maxPassengers;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    var totalPassengers = onboardCount - alightedCount
+                    stationData.push({stationName: route.routeName, passengerCount: totalPassengers, maxPassengers: max, congestionLevel: getCongestionLevel(totalPassengers, max)});
+                }
+            }
+
+             
             stationData.sort((a, b) => b.passengerCount - a.passengerCount);
+            
         }
 
         return stationData;
@@ -127,7 +279,8 @@ export class BusActivityService {
 
     async sendStationLoadUpdate(pubsub: PubSub) {
         const stationData = await this.getStationLoadRank();
-        if (stationData.length > 0) {
+        console.log("STATION CHECK",stationData)
+        if ((stationData || []).length > 0) {
             await pubsub.publish(`stationLoadUpdate`, { stationLoadUpdate: stationData });
         }
     }
@@ -371,7 +524,7 @@ export class BusActivityService {
             selector,
             fields: ["createdAt", "passengerCount", "currentLocation"]
         });
-        console.log(selector)
+         
 
         const docs = result.docs;
         if (type === AnalyticsType.RidersTrend) return this._getRidersTrend(docs, range);

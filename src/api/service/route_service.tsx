@@ -77,4 +77,23 @@ export class RouteService{
             return new LocationInput(data)
         });
     }
+    public async getFullRoutes(){
+        var query = await this.db.find({
+            selector: {
+                scope: RouteModel.scope ,
+                collection: RouteModel.collection ,
+                channel: RouteModel.channel,
+                deleted:false 
+            }
+        })
+        if(query.docs.length > 0){
+            var f:any[]= [];
+            query.docs.forEach((doc)=>{
+                f.push(doc.location);
+            })
+            console.log("ROUTES " , f);
+            return query.docs;
+        }
+        return null;
+    }
 }
